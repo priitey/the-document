@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Viewer</title>
+    <link rel="stylesheet" href="doc2.css">
+
+    <!-- wordpos CDN -->
+    <script class="cdn" src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
+    <!-- html-to-image CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+</head>
+
+<body>
+        <main>
+            <nav id="controls">
+                <a href="../index.html" id="home" style="text-align: center;">Home</a>
+                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt">
+                <button id="reset">Reset Layout</button>
+                <button id="download">Download Layout</button>
+            </nav>
+            <div id="preview">
+                <div id="sticker">
+                    <!--<span class="term">Test</span>-->
+                    <!--JS inserts span w term class at random grid cells here-->
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="doc2.js"></script>
+</body>
+
+</html>

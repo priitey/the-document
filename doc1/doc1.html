@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Viewer</title>
+    <link rel="stylesheet" href="doc1.css">
+
+    <!-- wordpos CDN -->
+    <!--<script src="wordpos/dist/wordpos.min.js"></script>-->
+    <script class="cdn" src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
+
+    <!-- Paged.js CDN -->
+    <!-- <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script> -->
+</head>
+
+<body>
+        <!-- File Upload -->
+        <div class="upload-container">
+            <a href="../index.html" id="home">Home</a>
+            <label for="fileInput" class="upload-label">Upload The Document</label>
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" />
+        </div>
+
+        <div id="pdf-text"><!-- pdf text inserted here --></div>
+        <div id="terms" class="text-container">
+            <!-- Text content will be dynamically inserted here -->
+        </div>
+
+        <div id="image-container" class="image-container">
+            <!-- Images will be dynamically inserted here -->
+        </div>
+
+        <script type="module" src="doc1.js"></script>
+</body>
+
+</html>

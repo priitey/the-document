@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Viewer</title>
+    <link rel="stylesheet" href="doc3.css">
+
+    <!-- wordpos CDN -->
+    <script class="cdn" src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
+    <!-- html-to-image CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+</head>
+
+<body>
+        <main>
+            <nav id="controls">
+                <a href="../index.html" id="home" style="text-align: center;">Home</a>
+                <div id="info-container">
+                    <span id="info">Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
+What emerges from these documents?
+These layouts are built for 29 x 90 mm label stickers. Printers like the Brother QL-500 can be used to print these.</span>
+                </div>
+                <div id="sticker-controls">
+                    <div class="slider-container">
+                        <label for="colSlider">Columns</label>
+                        <input type="range" name="colSlider" id="cols" class="slider" min="1" max="12" value="3" oninput="this.nextElementSibling.value = this.value">
+                        <output class="rangeVal">3</output>
+                    </div>
+                    <div class="slider-container">
+                        <label for="rowSlider">Rows</label>
+                        <input type="range" name="rowSlider" id="rows" class="slider" min="1" max="50" value="30" oninput="this.nextElementSibling.value = this.value">
+                        <output class="rangeVal">30</output>
+                    </div>
+                    <div class="toggle-container">
+                        <label for="imgSwitch">Image</label>
+                        <input type="checkbox" name="imgSwitch" id="imgToggle" class="toggle" checked>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" accept=".pdf">
+                <button id="reset">Reset Layout</button>
+                <button id="download">Download Sticker</button>
+            </nav>
+            <div id="preview">
+                <div id="sticker">
+                    <div id="sticker-canvas">
+                        <!--JS inserts span w term class at random grid cells here-->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="doc3.js"></script>
+</body>
+
+</html>

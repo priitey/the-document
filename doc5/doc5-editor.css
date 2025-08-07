@@ -1,0 +1,151 @@
+:root {
+    --bg: #f2f2f2;
+    --fg: #434343;
+    --acc: #8f8f8f;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: 'Times New Roman';
+    font-size: 1em;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+#controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-evenly;
+    background-color: var(--bg);
+    box-shadow:
+        3px 3px var(--fg),
+        1em -0.1em 0.9em var(--bg);
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    > #home {
+        margin: 20px;
+        background-color: var(--bg);
+        box-shadow:
+        3px 3px var(--fg),
+        1em -0.1em 0.9em var(--bg);
+    }
+    > #info-container {
+        margin: 20px;
+        background-color: var(--bg);
+        box-shadow:
+        3px 3px var(--fg),
+        1em -0.1em 0.9em var(--bg);
+        max-width: 100%;
+        padding-left: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        > #info {
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            text-align: justify;
+        }
+        > #info:hover {
+            text-shadow:
+            1px 1px 2px var(--bg),
+            0 0 1em var(--fg),
+            0 0 0.2em var(--bg);
+        }
+    }
+    > #newPage,
+    > #book,
+    > #fileInput {
+        margin: 20px;
+        box-shadow:
+        3px 3px var(--fg),
+        1em -0.1em 0.9em var(--bg);
+        cursor: pointer;
+        font-family: 'Times New Roman';
+        font-size: 1em;
+        border: none;
+        border-radius: 0;
+        background-color: var(--bg);
+    }
+}
+
+#preview {
+    flex: 2;
+    background-color: var(--fg);
+    overflow-x: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    #book-container {
+        background: var(--acc);
+        margin: 20px 20px 20px 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        gap: 20px;
+        padding: 20px;
+        width: max-content;
+        height: 90%;
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            height: 90%; /* Keep height relative to parent */
+            aspect-ratio: 148 / 210; /* Set A5 aspect ratio (width/height) */
+        }
+        #og-page, .rmx-page {
+            font-family: 'Times New Roman';
+            font-size: 1em;
+            background: var(--bg);
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            position: relative; /* Crucial for positioning layout blocks */
+            overflow: hidden;
+            #pdf-canvas {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            .layout-block {
+                position: absolute;
+                background-color: none;
+                border: 1px none var(--fg);
+                box-sizing: border-box;
+                color: var(--fg);
+                overflow: hidden;
+                padding: 2px;
+                white-space: pre-wrap; /* Respects whitespace and wraps text */
+                word-break: break-all;
+            }
+            .sentence-block {
+                font-size: 0.5em;
+            }
+            .multi-term-block {
+                font-size: 0.7em;
+            }
+            .basic-block {
+                font-size: 0.9em;
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+:root {
+    --bg: #F3F3F3;
+    --fg: #3f3f3f;
+    --acc: #868686;
+    --head: 2.3em;
+    --sub: 1.6em;
+    --body: 1.0em;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+div#description {
+    margin: 10px 10px 10px 50%;
+    padding: 10px;
+    text-align: left;
+    max-width: 50%;
+    white-space: pre-wrap;
+    border: 1px solid var(--fg);
+}

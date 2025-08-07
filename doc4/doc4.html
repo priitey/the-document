@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Layout Remix</title>
+    <link rel="stylesheet" href="doc4.css">
+</head>
+
+<body>
+    <main>
+        <nav id="controls">
+            <a href="../index.html" id="home" style="text-align: center;">Home</a>
+            <div id="info-container">
+                <span id="info">Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
+What emerges from these documents?</span>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf">
+            <button id="reset">Reset</button>
+        </nav>
+        <div id="preview">
+            <div class="page-container">
+                <div id="og-page">
+                    <canvas id="pdf-canvas"></canvas>
+                </div>
+            </div>
+            <div class="page-container">
+                <div id="rmx-page">
+                    <!-- Remixed layout blocks will be generated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
+    <script src="doc4.js" type="module"></script>
+</body>
+
+</html>
