@@ -1,25 +1,25 @@
-:root {
-    --bg: #F3F3F3;
-    --fg: #3f3f3f;
-    --acc: #868686;
-    --head: 2.3em;
-    --sub: 1.6em;
-    --body: 1.0em;
+body {
+    max-width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 20px; /* Add the 20px spacing here */
+    box-sizing: border-box; /* This is key: it includes padding in the 100vh height */
 }
 
-* {
-    box-sizing: border-box;
+#main-container {
+    margin: 0; /* Remove the margin from the container */
+    width: 100%;
+    height: 100%; /* The container will now fill the padded area of the body */
 }
 
-a {
-    text-decoration: none;
-}
+/*p:hover,
+a:hover {
+    text-shadow:
+    1px 1px 2px #868686,
+    0 0 1em #414141,
+    0 0 0.2em #010101;
+}*/
 
-div#description {
-    margin: 10px 10px 10px 50%;
-    padding: 10px;
-    text-align: left;
-    max-width: 50%;
-    white-space: pre-wrap;
-    border: 1px solid var(--fg);
+a:hover {
+    text-decoration: underline !important;
 }

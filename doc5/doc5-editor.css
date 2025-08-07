@@ -26,6 +26,10 @@ main {
     flex-direction: row;
 }
 
+canvas {
+    filter: grayscale(100%);
+}
+
 #controls {
     display: flex;
     flex-direction: column;

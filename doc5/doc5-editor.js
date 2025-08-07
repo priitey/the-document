@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileInput = document.getElementById('fileInput');
     const newPageBtn = document.getElementById('newPage');
     const genBook = document.getElementById('book');
-    const ogPageContainer = document.getElementById('og-page'); 
+    const ogPageContainer = document.getElementById('og-page');
     const rmxPages = document.querySelectorAll('.rmx-page');
 
     // --- EVENT LISTENERS ---
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const fileUrl = URL.createObjectURL(file);
         currentPdf = await pdfjsLib.getDocument(fileUrl).promise;
-        
+
         // Process the first random page and generate the book upon successful upload
         await generateNewBookFromRandomPage(currentPdf);
     }
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function renderOriginalPage(page) {
         // --- MODIFIED: Re-create the canvas every time ---
-        
+
         // 1. Clear the container
         ogPageContainer.innerHTML = '';
 
@@ -132,35 +132,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // --- 1. Define manipulation rules based on page index ---
         let textReplacementChance = 0;
-        let layoutShiftPercentage = 0;
+        let layoutMode = 'grid'; // 'grid', 'spiral', 'wave'
+        let layoutIntensity = 0; // makes the spiral tighter or more open
+        let lerpFactor = 0;
         let isChaosMode = false;
         let isSingleWordMode = false;
 
-        // There are 10 .rmx-page elements, so we map indices 0-9
+        // Map a random value from [0, 1) to [10, 100)
+        let randIntensity = 10 + Math.random() * 90;
+
         switch (config.pageIndex) {
             case 0: // Page 1: Doc just text and layout
                 textReplacementChance = 0;
                 break;
-            case 1: // Page 2: Slightly changed text (20% replaced)
+            case 1: // Page 2: Slightly changed text
                 textReplacementChance = 0.2;
                 break;
-            case 2: // Page 3: Mildly changed text (50% replaced)
+            case 2: // Page 3: Mildly changed text
                 textReplacementChance = 0.5;
                 break;
-            case 3: // Page 4: Fully changed text (100% replaced)
+            case 3: // Page 4: Fully changed text
                 textReplacementChance = 1.0;
                 break;
-            case 4: // Page 5: Slightly changed layout (25% shift left)
+            case 4: // Page 5: Slightly changed layout -> Spiral
                 textReplacementChance = 1.0;
-                layoutShiftPercentage = 0.25;
+                layoutMode = 'spiral';
+                layoutIntensity = randIntensity;
+                lerpFactor = 0.034;
                 break;
-            case 5: // Page 6: Mildly changed layout (50% shift left)
+            case 5: // Page 6: Mildly changed layout -> Wave
                 textReplacementChance = 1.0;
-                layoutShiftPercentage = 0.5;
+                layoutMode = 'spiral';
+                layoutIntensity = randIntensity;
+                lerpFactor = 0.34;
                 break;
-            case 6: // Page 7: Fully changed layout (100% shift left)
+            case 6: // Page 7: Fully changed layout -> Intense Spiral
                 textReplacementChance = 1.0;
-                layoutShiftPercentage = 1.0;
+                layoutMode = 'spiral';
+                layoutIntensity = randIntensity;
+                lerpFactor = 1.0;
                 break;
             case 7: // Page 8: Chaos
                 isChaosMode = true;
@@ -178,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
             block.textContent = getRandomTerm();
             block.style.left = '40%';
             block.style.top = '50%';
-            block.style.fontSize = '3em';
+            block.style.fontSize = '1.0em';
             targetPageElement.appendChild(block);
             return; // Stop processing for this page
         }
@@ -193,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 block.style.top = `${Math.random() * 100}%`;
                 block.style.width = `${Math.random() * 40 + 10}%`; // 10% to 50% width
                 block.style.height = `${Math.random() * 15 + 5}%`; // 5% to 20% height
-                block.style.fontSize = `${Math.random() * 49.5 + 0.05}em`; // 0.5em to 50em
+                block.style.fontSize = `${Math.random() * 39.5 + 0.01}em`; // 0.5em to 50em
 
                 // Use the complex random content generator for chaos
                 const layoutMod = Math.random();
@@ -203,41 +213,71 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else { // Multi-term
                     baseContent = (getRandomTerm() + ' ').repeat(5);
                 }
-                
+
                 targetPageElement.appendChild(block);
                 fillBlockWithContent(block, baseContent);
             });
-            return; // Stop processing after chaos mode
+            return;
         }
 
         // --- 3. Standard page generation loop ---
-
-        textContent.items.forEach(item => {
+        textContent.items.forEach((item, index) => {
             const [sx, , , sy, x, y] = item.transform;
             const itemWidth = item.width;
             const itemHeight = item.height || (item.transform[3] - item.transform[1]);
 
-            let left = x * scale;
-            const top = (viewport.height - y - itemHeight) * scale;
+            let left, top, transform = '';
             const width = itemWidth * scale;
             const height = itemHeight * scale;
 
-            // Apply layout shift
-            left -= (targetPageElement.clientWidth * layoutShiftPercentage);
+            const initialLeft = x * scale;
+            const initialTop = (viewport.height - y - itemHeight) * scale;
+            
+            switch (layoutMode) {
+                case 'spiral':
+                    // Calculate the target spiral position
+                    const pageCenterX = targetPageElement.clientWidth / 2;
+                    const pageCenterY = targetPageElement.clientHeight / 2;
+                    const angle = 0.5 * index;
+                    const radius = layoutIntensity * (index / textContent.items.length); // Normalize radius
+                    const targetLeft = pageCenterX + radius * Math.cos(angle) - (width / 2);
+                    const targetTop = pageCenterY + radius * Math.sin(angle) - (height / 2);
+
+                    // Interpolate between initial and target positions
+                    left = initialLeft + (targetLeft - initialLeft) * lerpFactor;
+                    top = initialTop + (targetTop - initialTop) * lerpFactor;
+                    const rotationInRad = angle * lerpFactor;
+                    transform = `rotate(${rotationInRad}rad)`;
+                    break;
+
+                case 'wave':
+                    const waveAmplitude = layoutIntensity;
+                    const waveFrequency = 0.02;
+                    left = (x * scale);
+                    // The new 'top' is the original 'y' plus a sine wave offset
+                    top = (viewport.height - y - itemHeight) * scale + waveAmplitude * Math.sin(left * waveFrequency);
+                    break;
+
+                case 'grid':
+                default:
+                    // The default rectangular grid layout
+                    left = x * scale;
+                    top = (viewport.height - y - itemHeight) * scale;
+                    break;
+            }
 
             const block = document.createElement('div');
             block.className = 'layout-block';
             block.style.left = `${left}px`;
             block.style.top = `${top}px`;
             block.style.width = `${width}px`;
-            
+            block.style.transform = transform;
+
             let baseContent = '';
             let blockClass = '';
-            let finalHeight = height * 1.8; // Default height multiplier
+            let finalHeight = height * 1.8;
 
-            // Apply text replacement logic
             if (Math.random() < textReplacementChance) {
-                // Use the complex random content generator
                 const layoutMod = Math.random();
                 if (layoutMod < 0.25) {
                     const term1 = getRandomTerm();
@@ -252,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const terms = Array.from({ length: 10 }, getRandomTerm);
                     baseContent = [terms[0], getRandomConnector(), ...terms.slice(1, 3), getRandomConnector(), ...terms.slice(3, 5), getRandomConnector(), ...terms.slice(5, 7), getRandomConnector(), ...terms.slice(7, 9), getRandomConnector(), terms[9]].join(' ') + ' ';
                     blockClass = 'big-sentence-block';
-                    finalHeight = height * 2.5; // Apply specific height for this block type
+                    finalHeight = height * 2.5;
                 } else if (layoutMod < 0.8) {
                     const term = getRandomTerm();
                     baseContent = term + ' ';
@@ -262,15 +302,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     blockClass = 'basic-block';
                 }
             } else {
-                // Use original text
                 baseContent = item.str;
                 blockClass = 'original-text-block';
             }
-            
+
             block.style.height = `${finalHeight}px`;
             block.classList.add(blockClass);
             targetPageElement.appendChild(block);
             fillBlockWithContent(block, baseContent);
+
+            if (config.pageIndex <= 2) {
+                adjustFontSizeToFit(block);
+            }
         });
     }
 
@@ -287,6 +330,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 block.textContent = lastGoodContent;
                 break;
             }
+        }
+    }
+
+    /**
+     * NEW: Reduces font size of a block until its content no longer overflows.
+     * @param {HTMLElement} block - The block element to adjust.
+     */
+    function adjustFontSizeToFit(block) {
+        const minFontSize = 4; // Minimum font size in pixels to prevent it from disappearing
+
+        // Loop with a safety break to prevent infinite loops
+        for (let i = 0; i < 25; i++) {
+            // Check for overflow. If it fits, we're done.
+            if (block.scrollHeight <= block.clientHeight && block.scrollWidth <= block.clientWidth) {
+                break;
+            }
+
+            // Get the current font size in pixels
+            const computedStyle = window.getComputedStyle(block);
+            let currentFontSize = parseFloat(computedStyle.fontSize);
+
+            // If we've hit the minimum size, stop trying
+            if (currentFontSize <= minFontSize) {
+                break;
+            }
+
+            // Reduce the font size by 1px
+            const newSize = Math.max(minFontSize, currentFontSize - 1);
+            block.style.fontSize = `${newSize}px`;
         }
     }
 });
