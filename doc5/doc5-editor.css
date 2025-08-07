@@ -137,7 +137,8 @@ main {
                 white-space: pre-wrap; /* Respects whitespace and wraps text */
                 word-break: break-all;
             }
-            .sentence-block {
+            .small-sentence-block,
+            .big-sentence-block {
                 font-size: 0.5em;
             }
             .multi-term-block {
