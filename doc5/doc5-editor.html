@@ -16,11 +16,13 @@
             <a href="../index.html" id="home" style="text-align: center;">Home</a>
             <div id="info-container">
                 <span id="info">Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
-                    What emerges from these documents?</span>
+What emerges from these documents?
+
+After you save your pdf you may have to refresh this page in order to download another. This is a bug which will hopefully be fixed.</span>
             </div>
             <input type="file" id="fileInput" accept=".pdf">
             <button id="newPage">New Page</button>
-            <button id="book">Print/Save Book</button>
+            <button id="book">Save PDF</button>
         </nav>
         <!-- Right Panel: Generated Pages-->
         <div id="preview">
@@ -91,11 +93,11 @@
             </div>
         </div>
     </main>
-    
+
     <div id="print-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
     <script type="module" src="doc5-editor.js"></script>

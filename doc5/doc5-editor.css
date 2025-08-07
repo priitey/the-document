@@ -152,6 +152,12 @@ canvas {
     }
 }
 
+.generated-page-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 #loading-overlay {
     position: fixed;
     top: 0;
@@ -168,6 +174,7 @@ canvas {
     color: var(--fg);
 }
 
+/* --- PRINT STYLES (REVISED) --- */
 @media print {
     @page {
         size: A6 portrait;
@@ -189,13 +196,13 @@ canvas {
         position: absolute;
         left: 0;
         top: 0;
-        width: 100%;
+        width: 100% !important;
         margin: 0;
         padding: 0;
         gap: 0;
     }
 
-    /* Ensure each page (which is now just an image) takes up the full page */
+    /* Ensure each page container takes up the full page */
     #book-container > div {
         width: 100% !important;
         height: 100% !important;
@@ -205,5 +212,20 @@ canvas {
     /* Prevent an extra blank page at the end */
     #book-container > div:last-child {
         page-break-after: auto;
+    }
+
+    #og-page, .rmx-page, #first-page, #last-page {
+        box-shadow: none !important;
+        display: flex !important;
+        justify-content: center !important; /* Center horizontally */
+        align-items: center !important;     /* Center vertically */
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .generated-page-image {
+        height: 100% !important;  /* Touch the top and bottom edges */
+        width: auto !important;   /* Let the width adjust automatically */
+        object-fit: contain !important; /* Still useful as a fallback */
     }
 }

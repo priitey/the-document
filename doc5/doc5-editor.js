@@ -34,63 +34,65 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     genBook.addEventListener('click', generateBookPDF);
     async function generateBookPDF() {
-        // --- 1. Show loading overlay and get all page elements ---
+        // --- 1. Setup loading overlay and jsPDF document ---
         const loadingOverlay = document.createElement('div');
         loadingOverlay.id = 'loading-overlay';
         document.body.appendChild(loadingOverlay);
 
-        const printContainer = document.getElementById('print-container');
-        printContainer.innerHTML = ''; // Clear the separate print container, we won't use it for printing
+        // Initialize jsPDF. 'p' for portrait, 'mm' for millimeters, 'a6' for page size.
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a6');
+        const a6Width = 105;
+        const a6Height = 148;
 
         const pageElements = document.querySelectorAll(
             '#book-container > #front-cover, #book-container > .page-container:has(#og-page), #book-container > .page-container:has(.rmx-page), #book-container > #back-cover'
         );
 
-        let pageCount = 0;
-        // --- 2. Loop through each page, generate an image, and replace the content ---
-        for (const pageContainer of pageElements) {
-            pageCount++;
-            loadingOverlay.textContent = `Generating Page ${pageCount} / 12...`;
+        // --- 2. Loop through pages, generate images, and add them to the PDF ---
+        for (let i = 0; i < pageElements.length; i++) {
+            const pageContainer = pageElements[i];
+            loadingOverlay.textContent = `Generating Page ${i + 1} / 12...`;
 
-            // Find the actual content div within the container
             const contentDiv = pageContainer.querySelector('#first-page, #og-page, .rmx-page, #last-page');
             if (!contentDiv) continue;
 
             try {
-                // --- Generate image from the content div ---
                 const dataUrl = await htmlToImage.toPng(contentDiv, {
                     quality: 1.0,
-                    pixelRatio: 2 // High quality rendering
+                    pixelRatio: 3 // Use higher pixelRatio for better quality in the PDF
                 });
 
-                // --- Create an image element ---
-                const img = document.createElement('img');
-                img.src = dataUrl;
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'contain';
+                // If this is not the first page, add a new page to the PDF
+                if (i > 0) {
+                    doc.addPage();
+                }
 
-                // --- CRITICAL: Replace the div's content with the image ---
-                contentDiv.innerHTML = ''; // Clear the complex HTML
-                contentDiv.appendChild(img); // Add the simple image
+                // --- 3. Calculate image position for perfect centering ---
+                const imgProps = doc.getImageProperties(dataUrl);
+                const imgAspectRatio = imgProps.width / imgProps.height;
+                
+                // Calculate the width the image should have to fill the page height
+                const newWidth = a6Height * imgAspectRatio;
+                
+                // Calculate the x-offset to center the image horizontally
+                const xOffset = (a6Width - newWidth) / 2;
+
+                // Add the image to the PDF, filling the height and centered horizontally
+                doc.addImage(dataUrl, 'PNG', xOffset, 0, newWidth, a6Height);
 
             } catch (error) {
-                console.error('Could not generate page image:', error, contentDiv);
-                contentDiv.innerHTML = 'Error generating this page.';
+                console.error('Could not generate or add page image to PDF:', error, contentDiv);
+                // Optionally add a blank page or error text in the PDF
+                if (i > 0) doc.addPage();
+                doc.text('Error generating this page.', 10, 10);
             }
         }
 
-        // --- 3. Print the main document, which now only contains simple images ---
-        loadingOverlay.textContent = 'Ready to Print!';
-        
-        // Use a small timeout to ensure the browser has rendered the final images
-        setTimeout(() => {
-            document.body.removeChild(loadingOverlay);
-            window.print();
-            // After printing, the user will need to refresh or generate a new page
-            // to restore the interactive editor. This is a necessary trade-off for reliability.
-            alert("To continue editing, please click 'New Page' or refresh the page.");
-        }, 500);
+        // --- 4. Save the generated PDF ---
+        loadingOverlay.textContent = 'Saving PDF...';
+        doc.save('book.pdf');
+        document.body.removeChild(loadingOverlay);
     }
 
     // --- LOGIC FUNCTIONS ---
