@@ -1,6 +1,6 @@
 :root {
-    --bg: #f2f2f2;
-    --fg: #434343;
+    --bg: #ffffff;
+    --fg: #000000;
     --acc: #8f8f8f;
 }
 
@@ -91,32 +91,33 @@ canvas {
 
 #preview {
     flex: 2;
-    background-color: var(--fg);
-    overflow-x: auto;
+    background-color: var(--bg);
+    overflow-x: hidden; /* Change from auto to hidden */
+    overflow-y: auto;   /* Change to auto for vertical scrolling */
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
+    justify-content: center; 
+    align-items: flex-start; /* Align to the top */
     #book-container {
         background: var(--acc);
-        margin: 20px 20px 20px 20px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-evenly;
-        gap: 20px;
+        margin: 20px;
         padding: 20px;
-        width: max-content;
-        height: 90%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Create 2 equal columns */
+        gap: 20px;
+        width: 90%;
+        max-width: 1000px; 
         .page-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            height: 90%; /* Keep height relative to parent */
-            aspect-ratio: 148 / 210; /* Set A5 aspect ratio (width/height) */
+            height: auto; 
+            aspect-ratio: 148 / 210; /* A-series paper ratio (A5, A6, etc.) */
         }
-        #og-page, .rmx-page {
+        #front-cover {
+            grid-column-start: 2;
+        }
+        #og-page, .rmx-page, #first-page, #last-page {
             font-family: 'Times New Roman';
             font-size: 1em;
             background: var(--bg);
@@ -125,7 +126,7 @@ canvas {
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             position: relative; /* Crucial for positioning layout blocks */
             overflow: hidden;
-            #pdf-canvas {
+            #pdf-canvas, #fc-canvas, #bc-canvas {
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
@@ -153,4 +154,18 @@ canvas {
             }
         }
     }
+}
+
+/* --- PRINT STYLES (REVISED) --- */
+@media print {
+    /* Define the page size and margins for the PDF */
+    @page {
+        size: A5 portrait;
+        margin: 15mm;
+    }
+
+    #controls {
+        display: none;
+    }
+
 }

@@ -21,56 +21,68 @@ What emerges from these documents?</span>
         </nav>
         <!-- Right Panel: Generated Pages-->
         <div id="preview">
-            <div id="book-container">
+            <div id="book-container" class="page-container">
+                <div id="front-cover" class="page-container">
+                    <div id="first-page">
+                        <!-- page 1: pdf image of the first page of og uploaded file -->
+                        <canvas id="fc-canvas"></canvas>
+                    </div>
+                </div>
                 <div class="page-container">
                     <div id="og-page">
-                        <!-- page 1: pdf image of random page of og uploaded file -->
+                        <!-- page 2: pdf image of random page of og uploaded file -->
                         <canvas id="pdf-canvas"></canvas>
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 2: exact text and layout of og file -->
+                        <!-- page 3: exact text and layout of og file -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!--  page 3: ~20% of text replaced with extracted terms -->
+                        <!--  page 4: ~20% of text replaced with extracted terms -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 4: ~50% of text replaced with extracted terms -->
+                        <!-- page 5: ~50% of text replaced with extracted terms -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 5: 100% of text replaced with extracted terms -->
+                        <!-- page 6: 100% of text replaced with extracted terms -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 6: layout is slighty shifted -->
+                        <!-- page 7: layout is slighty shifted -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 7: layout is mildly shifted -->
+                        <!-- page 8: layout is mildly shifted -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 8: layout is fully shifted -->
+                        <!-- page 9: layout is fully shifted -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 9: chaos -->
+                        <!-- page 10: chaos -->
                     </div>
                 </div>
                 <div class="page-container">
                     <div class="rmx-page">
-                        <!-- page 10: a single term left -->
+                        <!-- page 11: a single term left -->
+                    </div>
+                </div>
+                <div id="back-cover" class="page-container">
+                    <div id="last-page" class="page-container">
+                        <!-- page 12: pdf image of the last page of og uploaded pdf -->
+                        <canvas id="bc-canvas"></canvas>
                     </div>
                 </div>
             </div>

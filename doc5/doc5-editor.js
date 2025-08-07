@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const genBook = document.getElementById('book');
     const ogPageContainer = document.getElementById('og-page');
     const rmxPages = document.querySelectorAll('.rmx-page');
+    const fcCanvas = document.getElementById('fc-canvas');
+    const bcCanvas = document.getElementById('bc-canvas');
 
     // --- EVENT LISTENERS ---
     fileInput.addEventListener('change', handleFileSelect);
@@ -30,6 +32,56 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Please upload a PDF first.");
         }
     });
+    genBook.addEventListener('click', generateBookPDF);
+    function generateBookPDF() {
+        if (!currentPdf) {
+            alert("Please upload a PDF first to generate a book.");
+            return;
+        }
+
+        // Build a single HTML string for the entire book
+        let fullBookHTML = '';
+
+        // Get all page containers INSIDE the book container (not the book container itself)
+        const pageElements = document.querySelectorAll('#book-container .page-container');
+        let pageCount = 0;
+
+        // Process each page separately
+        pageElements.forEach((pageContainer) => {
+            // Skip the main container itself
+            if (pageContainer.id === 'book-container') return;
+
+            // Find content div - looking for divs with IDs (like first-page) or rmx-page class
+            const contentDiv = pageContainer.querySelector('div[id], div.rmx-page');
+            if (!contentDiv) return;
+
+            // Create a div for this page with margin and border to make pages distinct
+            fullBookHTML += '<div class="book-page" style="margin: 20px 0; border: 1px solid #ccc; padding: 20px;">';
+
+            // Add page number for debugging
+            fullBookHTML += `<div class="page-number">Page ${pageCount + 1}</div>`;
+
+            // Process the content
+            const canvas = contentDiv.querySelector('canvas');
+            if (canvas) {
+                // Add image with reasonable quality settings
+                fullBookHTML += `<img src="${canvas.toDataURL('image/jpeg', 0.9)}" style="width: 100%; max-width: 600px; display: block; margin: 0 auto;" />`;
+            } else {
+                // Add content HTML, making sure absolutely positioned elements display properly
+                fullBookHTML += `<div style="position: relative; min-height: 300px;">${contentDiv.innerHTML}</div>`;
+            }
+
+            fullBookHTML += '</div>';
+            pageCount++;
+        });
+
+        // Store the combined HTML directly (as a single piece)
+        localStorage.setItem('fullBookHTML', fullBookHTML);
+        localStorage.setItem('bookPageCount', pageCount);
+
+        // Open the book viewer in a new tab
+        window.open('doc5-book.html', '_blank');
+    }
 
     // --- LOGIC FUNCTIONS ---
     async function handleFileSelect(event) {
@@ -41,9 +93,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const fileUrl = URL.createObjectURL(file);
         currentPdf = await pdfjsLib.getDocument(fileUrl).promise;
 
+        // --- Render front and back covers (runs only once) ---
+        await renderCovers(currentPdf);
+
         // Process the first random page and generate the book upon successful upload
         await generateNewBookFromRandomPage(currentPdf);
     }
+
+    /**
+     * NEW HELPER: Renders the first and last pages to the cover canvases.
+     * @param {pdfjsLib.PDFDocumentProxy} pdf - The loaded PDF document.
+     */
+    async function renderCovers(pdf) {
+        // Get the first page (page 1)
+        const firstPage = await pdf.getPage(1);
+        await renderPageToCanvas(firstPage, fcCanvas);
+
+        // Get the last page
+        const lastPage = await pdf.getPage(pdf.numPages);
+        await renderPageToCanvas(lastPage, bcCanvas);
+    }
+
     /**
      * NEW: Master function that controls the entire book generation process.
      * This is called on initial upload and on every "New Page" click.
@@ -64,6 +134,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 4. Populate all the remixed page elements based on the new content
         populateAllRemixedPages(page, textContent);
+    }
+
+    /**
+     * NEW HELPER: Renders a given PDF page to a specific canvas element.
+     * @param {pdfjsLib.PDFPageProxy} page - The PDF page to render.
+     * @param {HTMLCanvasElement} canvas - The target canvas element.
+     */
+    async function renderPageToCanvas(page, canvas) {
+        const ctx = canvas.getContext('2d');
+        const viewport = page.getViewport({ scale: 1.5 });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        const renderContext = { canvasContext: ctx, viewport: viewport };
+        await page.render(renderContext).promise;
     }
 
     async function renderOriginalPage(page) {
@@ -232,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const initialLeft = x * scale;
             const initialTop = (viewport.height - y - itemHeight) * scale;
-            
+
             switch (layoutMode) {
                 case 'spiral':
                     // Calculate the target spiral position
