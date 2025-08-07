@@ -101,11 +101,11 @@ canvas {
         background: var(--acc);
         margin: 20px;
         padding: 20px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Create 2 equal columns */
+        display: flex;
+        flex-direction: column;
         gap: 20px;
         width: 90%;
-        max-width: 1000px; 
+        max-width: 500px; /* Adjust max-width for a single column view */
         .page-container {
             display: flex;
             flex-direction: column;
@@ -113,9 +113,6 @@ canvas {
             gap: 10px;
             height: auto; 
             aspect-ratio: 148 / 210; /* A-series paper ratio (A5, A6, etc.) */
-        }
-        #front-cover {
-            grid-column-start: 2;
         }
         #og-page, .rmx-page, #first-page, #last-page {
             font-family: 'Times New Roman';
@@ -134,7 +131,6 @@ canvas {
             .layout-block {
                 position: absolute;
                 background-color: none;
-                border: 1px none var(--fg);
                 box-sizing: border-box;
                 color: var(--fg);
                 overflow: hidden;
@@ -156,16 +152,58 @@ canvas {
     }
 }
 
-/* --- PRINT STYLES (REVISED) --- */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    font-family: 'Times New Roman', serif;
+    color: var(--fg);
+}
+
 @media print {
-    /* Define the page size and margins for the PDF */
     @page {
-        size: A5 portrait;
-        margin: 15mm;
+        size: A6 portrait;
+        margin: 0mm;
     }
 
-    #controls {
-        display: none;
+    /* Hide everything by default */
+    body * {
+        visibility: hidden;
     }
 
+    /* Make the book container and its children visible */
+    #book-container, #book-container * {
+        visibility: visible;
+    }
+
+    /* Position the book container to fill the printed page */
+    #book-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        gap: 0;
+    }
+
+    /* Ensure each page (which is now just an image) takes up the full page */
+    #book-container > div {
+        width: 100% !important;
+        height: 100% !important;
+        page-break-after: always; /* Each page gets its own sheet */
+    }
+
+    /* Prevent an extra blank page at the end */
+    #book-container > div:last-child {
+        page-break-after: auto;
+    }
 }

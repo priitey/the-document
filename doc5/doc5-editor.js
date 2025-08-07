@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // State variables
     let extractedTerms = null;
-    let currentPdf = null;      // Stores the loaded PDF document
+    let currentPdf = null;
 
     // DOM element references
     const fileInput = document.getElementById('fileInput');
@@ -33,54 +33,64 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     genBook.addEventListener('click', generateBookPDF);
-    function generateBookPDF() {
-        if (!currentPdf) {
-            alert("Please upload a PDF first to generate a book.");
-            return;
+    async function generateBookPDF() {
+        // --- 1. Show loading overlay and get all page elements ---
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'loading-overlay';
+        document.body.appendChild(loadingOverlay);
+
+        const printContainer = document.getElementById('print-container');
+        printContainer.innerHTML = ''; // Clear the separate print container, we won't use it for printing
+
+        const pageElements = document.querySelectorAll(
+            '#book-container > #front-cover, #book-container > .page-container:has(#og-page), #book-container > .page-container:has(.rmx-page), #book-container > #back-cover'
+        );
+
+        let pageCount = 0;
+        // --- 2. Loop through each page, generate an image, and replace the content ---
+        for (const pageContainer of pageElements) {
+            pageCount++;
+            loadingOverlay.textContent = `Generating Page ${pageCount} / 12...`;
+
+            // Find the actual content div within the container
+            const contentDiv = pageContainer.querySelector('#first-page, #og-page, .rmx-page, #last-page');
+            if (!contentDiv) continue;
+
+            try {
+                // --- Generate image from the content div ---
+                const dataUrl = await htmlToImage.toPng(contentDiv, {
+                    quality: 1.0,
+                    pixelRatio: 2 // High quality rendering
+                });
+
+                // --- Create an image element ---
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'contain';
+
+                // --- CRITICAL: Replace the div's content with the image ---
+                contentDiv.innerHTML = ''; // Clear the complex HTML
+                contentDiv.appendChild(img); // Add the simple image
+
+            } catch (error) {
+                console.error('Could not generate page image:', error, contentDiv);
+                contentDiv.innerHTML = 'Error generating this page.';
+            }
         }
 
-        // Build a single HTML string for the entire book
-        let fullBookHTML = '';
-
-        // Get all page containers INSIDE the book container (not the book container itself)
-        const pageElements = document.querySelectorAll('#book-container .page-container');
-        let pageCount = 0;
-
-        // Process each page separately
-        pageElements.forEach((pageContainer) => {
-            // Skip the main container itself
-            if (pageContainer.id === 'book-container') return;
-
-            // Find content div - looking for divs with IDs (like first-page) or rmx-page class
-            const contentDiv = pageContainer.querySelector('div[id], div.rmx-page');
-            if (!contentDiv) return;
-
-            // Create a div for this page with margin and border to make pages distinct
-            fullBookHTML += '<div class="book-page" style="margin: 20px 0; border: 1px solid #ccc; padding: 20px;">';
-
-            // Add page number for debugging
-            fullBookHTML += `<div class="page-number">Page ${pageCount + 1}</div>`;
-
-            // Process the content
-            const canvas = contentDiv.querySelector('canvas');
-            if (canvas) {
-                // Add image with reasonable quality settings
-                fullBookHTML += `<img src="${canvas.toDataURL('image/jpeg', 0.9)}" style="width: 100%; max-width: 600px; display: block; margin: 0 auto;" />`;
-            } else {
-                // Add content HTML, making sure absolutely positioned elements display properly
-                fullBookHTML += `<div style="position: relative; min-height: 300px;">${contentDiv.innerHTML}</div>`;
-            }
-
-            fullBookHTML += '</div>';
-            pageCount++;
-        });
-
-        // Store the combined HTML directly (as a single piece)
-        localStorage.setItem('fullBookHTML', fullBookHTML);
-        localStorage.setItem('bookPageCount', pageCount);
-
-        // Open the book viewer in a new tab
-        window.open('doc5-book.html', '_blank');
+        // --- 3. Print the main document, which now only contains simple images ---
+        loadingOverlay.textContent = 'Ready to Print!';
+        
+        // Use a small timeout to ensure the browser has rendered the final images
+        setTimeout(() => {
+            document.body.removeChild(loadingOverlay);
+            window.print();
+            // After printing, the user will need to refresh or generate a new page
+            // to restore the interactive editor. This is a necessary trade-off for reliability.
+            alert("To continue editing, please click 'New Page' or refresh the page.");
+        }, 500);
     }
 
     // --- LOGIC FUNCTIONS ---
@@ -115,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * NEW: Master function that controls the entire book generation process.
+     * Master function that controls the entire book generation process.
      * This is called on initial upload and on every "New Page" click.
      * @param {pdfjsLib.PDFDocumentProxy} pdf - The loaded PDF document.
      */
@@ -137,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * NEW HELPER: Renders a given PDF page to a specific canvas element.
+     * Renders a given PDF page to a specific canvas element.
      * @param {pdfjsLib.PDFPageProxy} page - The PDF page to render.
      * @param {HTMLCanvasElement} canvas - The target canvas element.
      */
