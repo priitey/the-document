@@ -7,7 +7,7 @@
     <title>Document Viewer</title>
     <link rel="icon" href="../favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="doc3.css">
-
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
     <!-- wordpos CDN -->
     <script class="cdn" src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
     <!-- html-to-image CDN -->
@@ -15,44 +15,53 @@
 </head>
 
 <body>
-        <main>
-            <nav id="controls">
-                <a href="../index.html" id="home" style="text-align: center;">Home</a>
-                <div id="info-container">
-                    <span id="info">Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
-What emerges from these documents?
-These layouts are built for 29 x 90 mm label stickers. Printers like the Brother QL-500 can be used to print these.</span>
+    <main>
+        <div class="window" id="controls-window">
+            <div class="title-bar">
+                <div class="title-bar-text">Sticker Controls</div>
+            </div>
+            <div class="window-body">
+                <button id="homeBtn">Home</button>
+                <button id="uploadBtn">Upload Document</button>
+                <input type="file" id="fileInput" accept=".pdf" hidden>
+
+                <div class="sunken-panel" id="info-panel">
+                    Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
+                    What emerges from these documents? 
+                    <br>These layouts are built for 29 x 90 mm label stickers.
+                    <br>You can use a thermal printer like the Brother QL-500 to print them.
                 </div>
-                <div id="sticker-controls">
-                    <div class="slider-container">
-                        <label for="colSlider">Columns</label>
-                        <input type="range" name="colSlider" id="cols" class="slider" min="1" max="12" value="3" oninput="this.nextElementSibling.value = this.value">
-                        <output class="rangeVal">3</output>
+
+                <fieldset>
+                    <legend>Layout</legend>
+                    <div class="field-row-stacked">
+                        <label for="cols">Columns (1-12)</label>
+                        <input id="cols" type="range" min="1" max="12" value="3" />
                     </div>
-                    <div class="slider-container">
-                        <label for="rowSlider">Rows</label>
-                        <input type="range" name="rowSlider" id="rows" class="slider" min="1" max="50" value="30" oninput="this.nextElementSibling.value = this.value">
-                        <output class="rangeVal">30</output>
+                    <div class="field-row-stacked">
+                        <label for="rows">Rows (1-50)</label>
+                        <input id="rows" type="range" min="1" max="50" value="30" />
                     </div>
-                    <div class="toggle-container">
-                        <label for="imgSwitch">Image</label>
-                        <input type="checkbox" name="imgSwitch" id="imgToggle" class="toggle" checked>
+                    <div class="field-row">
+                        <input id="imgToggle" type="checkbox" checked>
+                        <label for="imgToggle">Include Image</label>
                     </div>
-                </div>
-                <input type="file" id="fileInput" accept=".pdf">
+                </fieldset>
+
                 <button id="reset">Shuffle Layout</button>
                 <button id="download">Download Sticker</button>
-            </nav>
-            <div id="preview">
-                <div id="sticker">
-                    <div id="sticker-canvas">
-                        <!--JS inserts span w term class at random grid cells here-->
-                    </div>
+            </div>
+        </div>
+        <div id="preview">
+            <div id="sticker">
+                <div id="sticker-canvas">
+                    <!--JS inserts span w term class at random grid cells here-->
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
 
-        <script type="module" src="doc3.js"></script>
+    <script type="module" src="doc3.js"></script>
 </body>
 
 </html>

@@ -22,6 +22,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const rowSlider = document.getElementById('rows');
     const imgToggle = document.getElementById('imgToggle');
 
+    // --- NEW: Event listeners for 98.css buttons ---
+    const homeBtn = document.getElementById('homeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    homeBtn.addEventListener('click', () => {
+        window.location.href = '../index.html';
+    });
+
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click(); // Programmatically click the hidden file input
+    });
+    // --- End of new code ---
+
     function extractText(pdfUrl) {
         var pdf = pdfjsLib.getDocument(pdfUrl);
         return pdf.promise.then(function (pdf) {
@@ -113,12 +126,14 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     });
 
-    const sliders = document.querySelectorAll('.slider');
-    function calcValue(slider) {
-        let valPercent = (slider.value / slider.max) * 100;
-        slider.style.background = `linear-gradient(to right, rgb(233, 233, 233) ${valPercent}%, rgb(123, 123, 123) ${valPercent}%)`;
-        slider.style.border = `1px solid rgb(12, 12, 12)`;
-    }
+    // REMOVED: The calcValue function is no longer needed as 98.css styles the sliders.
+    // const sliders = document.querySelectorAll('.slider');
+    // function calcValue(slider) { ... }
+
+    // MODIFIED: Attach listeners directly to the sliders
+    colSlider.addEventListener('input', updateStickerGrid);
+    rowSlider.addEventListener('input', updateStickerGrid);
+
     function updateStickerGrid() {
         const columns = colSlider.value;
         const rows = rowSlider.value;
@@ -131,18 +146,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // console.log(`Grid updated: ${columns} columns, ${rows} rows`);
     }
-    sliders.forEach(el => {
-        el.addEventListener('input', () => {
-            calcValue(el);
-
-            // Update grid when sliders change
-            if (el.id === 'cols' || el.id === 'rows') {
-                updateStickerGrid();
-            }
-        });
-        calcValue(el); // Initialize on page load
-    });
+    
+    // Initialize grid on page load
     updateStickerGrid();
+
     const resetButton = document.getElementById('reset');
     resetButton.addEventListener('click', function (event) {
         const file = globalFile;
