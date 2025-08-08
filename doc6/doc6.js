@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     nextStageBtn.addEventListener('click', advanceAnimationStage);
     shuffleBtn.addEventListener('click', loadRandomPage); // NEW
 
-    // --- MODIFIED: New Animation Timeline with Percentage-based Replacement ---
     const animationStages = [
         'INITIAL',
         'REPLACE_10_PERCENT',
@@ -78,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
         await renderOriginalPage(page);
         initializeAnimatedBlocks(page, textContent);
 
-        // NEW: Create a shuffled order for block replacement
         shuffledBlockIndices = animatedBlocks.map((_, i) => i);
         for (let i = shuffledBlockIndices.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -112,7 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 height: itemHeight * scale + 30,
                 rotation: 0,
                 opacity: 1,
-                fontSize: 8, // NEW: Define a base font size in pixels
+                fontSize: 8,
+                scale: 1
             };
 
             blockElement.style.width = `${initialState.width}px`;
@@ -123,7 +122,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 originalContent: item.str,
                 initialState: { ...initialState },
                 ...initialState, // current state
-                target: { ...initialState } // target state starts same as initial
+                target: { ...initialState }, // target state starts same as initial
+                textAnimation: {
+                    isAnimating: false,
+                    targetText: '',
+                    startTime: 0,
+                    duration: 1000,
+                    scrambleChars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+                }
             });
         });
     }
@@ -165,15 +171,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // --- Handle all other stages ---
-        // NEW: Define random parameters for the spiral stage, calculated once per stage activation
         const spiralTightness = Math.random() * 1.0 + 0.2; // e.g., 0.2 to 1.2
         const spiralMaxRadius = Math.random() * 150 + 100; // e.g., 100 to 250
         const spiralDirection = Math.random() < 0.5 ? 1 : -1;
 
         animatedBlocks.forEach((block, index) => {
-            // Default to initial state for height and font size unless overridden
+            // Default to initial state for height, font size, and scale unless overridden
             block.target.height = block.initialState.height;
             block.target.fontSize = block.initialState.fontSize;
+            block.target.scale = block.initialState.scale; // NEW: Reset scale
 
             switch (newStage) {
                 case 'INITIAL':
@@ -200,75 +206,101 @@ document.addEventListener('DOMContentLoaded', function () {
                     const isReplaced = shuffledBlockIndices.indexOf(index) < replaceThreshold;
 
                     if (isReplaced) {
-                        updateBlockText(block, generateComplexContent);
+                        startTextAnimation(block, generateComplexContent, index * 5);
                     } else {
+                        block.textAnimation.isAnimating = false;
                         block.element.textContent = block.originalContent;
                     }
                     break;
 
                 case 'SPIRAL':
-                    // MODIFIED: Use the new random parameters
                     const angle = spiralTightness * index * spiralDirection;
                     const radius = spiralMaxRadius * (index / animatedBlocks.length);
                     block.target.x = pageCenterX + radius * Math.cos(angle) - (block.width / 2);
                     block.target.y = pageCenterY + radius * Math.sin(angle) - (block.height / 2);
                     block.target.rotation = angle * (180 / Math.PI);
                     break;
-                // REMOVED: Old 'CHAOS' case is replaced by the two below
                 case 'CHAOS_POSITION':
                     block.target.x = Math.random() * rmxPage.clientWidth;
                     block.target.y = Math.random() * rmxPage.clientHeight;
                     block.target.rotation = Math.random() * 360;
-                    // Height and font size are already reset to initial by the default above
                     break;
                 case 'CHAOS_MORPH':
-                    // Keep the chaotic position from the previous stage's target
                     block.target.x = block.x;
                     block.target.y = block.y;
                     block.target.rotation = block.rotation;
-                    // Augment height and font size
-                    block.target.height = block.initialState.height * 5.5;
-                    block.target.fontSize = Math.random() * (100 - 1) + 1;
+                    block.target.scale = Math.random() * 10 + 0.5; // e.g., scale from 0.5x to 10x
+                    block.target.height = block.initialState.height * 2.5;
                     break;
             }
         });
     }
 
     /**
-     * NEW: Fills a block's fixed width with repeating text.
+     * This function now starts a character-by-character animation
+     * instead of instantly updating the text.
      * @param {object} block - The animated block object.
-     * @param {function} textGenerator - A function that returns the string to repeat.
+     * @param {function} textGenerator - A function that returns the new target string.
+     * @param {number} staggerDelay - A delay to offset the start of the animation.
      */
-    function updateBlockText(block, textGenerator) {
+    function startTextAnimation(block, textGenerator, staggerDelay = 0) {
         const baseText = textGenerator();
         if (!baseText || baseText.trim() === '') {
-             block.element.textContent = ''; // Clear if no text
-             return;
+            block.textAnimation.targetText = '';
+        } else {
+            // Repeat text to fill the block's width, same as before.
+            block.textAnimation.targetText = (baseText + ' ').repeat(50);
         }
-        // Repeat the text many times. The block's fixed width and overflow:hidden
-        // will handle clipping it to the correct visual size.
-        const repeatedText = (baseText + ' ').repeat(50);
-        block.element.textContent = repeatedText;
+        
+        block.textAnimation.isAnimating = true;
+        block.textAnimation.startTime = Date.now() + staggerDelay;
     }
-
     function animationLoop() {
         const lerpFactor = 0.05; // Controls the speed of the animation
+        const now = Date.now();
 
         animatedBlocks.forEach(block => {
-            // LERP all properties
+            // --- LERP positional properties ---
             block.x = lerp(block.x, block.target.x, lerpFactor);
             block.y = lerp(block.y, block.target.y, lerpFactor);
             block.rotation = lerp(block.rotation, block.target.rotation, lerpFactor);
-            block.height = lerp(block.height, block.target.height, lerpFactor); // NEW
-            block.fontSize = lerp(block.fontSize, block.target.fontSize, lerpFactor); // NEW
+            block.height = lerp(block.height, block.target.height, lerpFactor);
+            block.fontSize = lerp(block.fontSize, block.target.fontSize, lerpFactor);
+            block.scale = lerp(block.scale, block.target.scale, lerpFactor); // NEW: Lerp scale
 
-            // Apply the new state to the DOM element
+
+            if (block.textAnimation.isAnimating && now > block.textAnimation.startTime) {
+                const anim = block.textAnimation;
+                const elapsedTime = now - anim.startTime;
+                const progress = Math.min(elapsedTime / anim.duration, 1);
+
+                const targetLength = Math.floor(anim.targetText.length * progress);
+                let revealedText = anim.targetText.substring(0, targetLength);
+                
+                let scrambledText = '';
+                const remainingLength = Math.floor(block.width / block.fontSize * 2) - targetLength;
+                if (remainingLength > 0) {
+                    for (let i = 0; i < remainingLength; i++) {
+                        const randomIndex = Math.floor(Math.random() * anim.scrambleChars.length);
+                        scrambledText += anim.scrambleChars[randomIndex];
+                    }
+                }
+
+                block.element.textContent = revealedText + scrambledText;
+
+                if (progress >= 1) {
+                    anim.isAnimating = false;
+                    block.element.textContent = anim.targetText;
+                }
+            }
+
+            // --- Apply styles to the DOM element ---
             const style = block.element.style;
             style.left = `${block.x}px`;
             style.top = `${block.y}px`;
-            style.transform = `rotate(${block.rotation}deg)`;
-            style.height = `${block.height}px`; // NEW
-            style.fontSize = `${block.fontSize}px`; // NEW
+            style.transform = `rotate(${block.rotation}deg) scale(${block.scale})`;
+            style.height = `${block.height}px`;
+            style.fontSize = `${block.fontSize}px`;
         });
 
         animationFrameId = requestAnimationFrame(animationLoop);
@@ -299,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * MODIFIED: Can now get a term from a specific category.
+     * Can now get a term from a specific category.
      * @param {string|null} type - The category (e.g., 'nouns') or null for any.
      */
     function getRandomTerm(type = null) {
@@ -319,9 +351,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return termList[Math.floor(Math.random() * termList.length)];
     }
 
-    /**
-     * NEW: Generates complex sentences like in doc5.
-     */
     function generateComplexContent() {
         const layoutMod = Math.random();
         if (layoutMod < 0.33) { // Simple sentence
