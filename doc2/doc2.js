@@ -12,6 +12,19 @@ let termExtractor;
 let globalFile = null;
 
 document.addEventListener('DOMContentLoaded', function () {
+    // --- NEW: Event listeners for 98.css buttons ---
+    const homeBtn = document.getElementById('homeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    
+    homeBtn.addEventListener('click', () => {
+        window.location.href = '../index.html';
+    });
+
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click(); // Programmatically click the hidden file input
+    });
+    // --- End of new code ---
+
     var termsNum = 24;
     termExtractor = new TermExtractor(wordpos, termsNum);
 

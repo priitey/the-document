@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document Viewer</title>
     <link rel="stylesheet" href="doc2.css">
+    <link rel="stylesheet" href="https://unpkg.com/98.css" />
     <link rel="icon" href="../favicon.png" type="image/x-icon">
 
     <!-- wordpos CDN -->
@@ -16,12 +17,18 @@
 
 <body>
         <main>
-            <nav id="controls">
-                <a href="../index.html" id="home" style="text-align: center;">Home</a>
-                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt">
-                <button id="reset">Shuffle Layout</button>
-                <button id="download">Download Layout</button>
-            </nav>
+            <div class="window" id="controls-window">
+                <div class="title-bar">
+                    <div class="title-bar-text">Controls</div>
+                </div>
+                <div class="window-body">
+                    <button id="homeBtn">Home</button>
+                    <button id="uploadBtn">Upload Document</button>
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" hidden/>
+                    <button id="reset">Shuffle Layout</button>
+                    <button id="download">Download Layout</button>
+                </div>
+            </div>
             <div id="preview">
                 <div id="sticker">
                     <!--<span class="term">Test</span>-->
