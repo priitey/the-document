@@ -211,7 +211,46 @@ document.addEventListener('DOMContentLoaded', function () {
         const imageContainer = document.getElementById('image-container');
         imageContainer.innerHTML = '<p style="text-align: center; color: #cc0000;">Error loading image.</p>';
     }
-    // Search & display image logic here
-    // Search & display image logic here
-    // Search & display image logic here
+
+    const homeBtn = document.getElementById('homeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    homeBtn.addEventListener('click', () => {
+        window.location.href = '../index.html';
+    });
+
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click(); // Programmatically click the hidden file input
+    });
+
+    fileInput.addEventListener('change', handleFileSelect);
 });
+
+async function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        console.error('No file selected');
+        return;
+    }
+
+    if (file.type !== 'application/pdf') {
+        console.error('Please select a PDF file');
+        return;
+    }
+
+    const fileUrl = URL.createObjectURL(file);
+
+    extractText(fileUrl).then(
+        function (text) {
+            console.log('Extracted text:', text);
+            textContainer.textContent = text;
+            extractPartsOfSpeech(text);
+            URL.revokeObjectURL(fileUrl);
+        },
+        function (reason) {
+            console.error('Error extracting text:', reason);
+            textContainer.textContent = 'Error extracting text: ' + reason;
+            URL.revokeObjectURL(fileUrl);
+        }
+    );
+}

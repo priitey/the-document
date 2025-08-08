@@ -8,66 +8,36 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Times New Roman', serif;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--fg-color);
-    font-family: Arial, sans-serif;
     height: 100vh;
     overflow: hidden;
 }
 
-/* Left Column - File Upload */
-.upload-container {
+/* MODIFIED: Replaced .upload-container with styles for the new window */
+#controls-window {
     position: absolute;
     z-index: 5;
-    top: 50%;
-    left: 2%;
-    transform: translateY(-50%);
-    flex: 1;
+    top: 20px;
+    left: 20px;
+    width: 200px; /* Adjust width as needed */
+}
+
+#controls-window .window-body {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
+    gap: 6px;
 }
 
+button#uploadBtn {
+    cursor: pointer;
+}
 #fileInput {
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: none; /* Hide the default file input */
-}
-#home {
-    text-decoration: none;
-    color: var(--fg-color);
-    text-shadow: none;
-}
-.upload-label {
-    font-size: 16px;
-    color: var(--fg-color);
-    text-align: center;
-    text-shadow: 0 0 10px var(--bg-color);
-    cursor: pointer;
-}
-.upload-label:hover,
-#home {
-    color: var(--bg-color);
-    text-shadow: 0 0 10px var(--fg-color);
-    transition: all 0.4s ease;
-}
-input[type="file"] {
-    cursor: pointer;
-}
-input#fileInput {
-    cursor: pointer;
-}
-
-#fileInput:hover {
-    border-color: var(--fg-color);
+    /* The input is already hidden in the HTML, this is just for safety */
+    display: none;
 }
 
 #pdf-text

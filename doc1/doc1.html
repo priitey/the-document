@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document Viewer</title>
     <link rel="stylesheet" href="doc1.css">
+    <link rel="stylesheet" href="https://unpkg.com/98.css" />
     <link rel="icon" href="../favicon.png" type="image/x-icon">
 
     <!-- wordpos CDN -->
@@ -18,10 +19,15 @@
 
 <body>
         <!-- File Upload -->
-        <div class="upload-container">
-            <a href="../index.html" id="home">Home</a>
-            <label for="fileInput" class="upload-label">Upload The Document</label>
-            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" />
+        <div class="window" id="controls-window">
+            <div class="title-bar">
+                <div class="title-bar-text">Controls</div>
+            </div>
+            <div class="window-body">
+                <button id="homeBtn"><a href="../index.html">Home</a></button>
+                <button id="uploadBtn">Upload Document</button>
+                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" hidden />
+            </div>
         </div>
 
         <div id="pdf-text"><!-- pdf text inserted here --></div>
