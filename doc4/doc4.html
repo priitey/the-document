@@ -12,15 +12,21 @@
 
 <body>
     <main>
-        <nav id="controls">
-            <a href="../index.html" id="home" style="text-align: center;">Home</a>
-            <div id="info-container">
-                <span id="info">Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
-                    What emerges from these documents?</span>
+        <div class="window" id="controls-window">
+            <div class="title-bar">
+                <div class="title-bar-text">Controls</div>
             </div>
-            <input type="file" id="fileInput" accept=".pdf">
-            <button id="reset">Shuffle</button>
-        </nav>
+            <div class="window-body">
+                <button id="homeBtn">Home</button>
+                <div class="sunken-panel" id="info-panel">
+                    Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
+                    What emerges from these documents?
+                </div>
+                <button id="uploadBtn">Upload Document</button>
+                <input type="file" id="fileInput" accept=".pdf" hidden>
+                <button id="reset">Shuffle</button>
+            </div>
+        </div>
         <div id="preview">
             <div class="page-container">
                 <div id="og-page">

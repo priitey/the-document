@@ -15,9 +15,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const rmxPage = document.getElementById('rmx-page');
     const canvas = document.getElementById('pdf-canvas');
     const ctx = canvas.getContext('2d');
+    const homeBtn = document.getElementById('homeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    homeBtn.addEventListener('click', () => {
+        window.location.href = '../index.html';
+    });
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
 
     fileInput.addEventListener('change', handleFileSelect);
-    // MODIFIED: The reset listener now calls the new processRandomPage function
     reset.addEventListener('click', () => {
         if (currentPdf) {
             processRandomPage(currentPdf);
@@ -38,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
         await processRandomPage(currentPdf);
     }
 
-    // NEW: This function contains the logic to process any random page from a loaded PDF
     async function processRandomPage(pdf) {
         const randomIndex = Math.floor(Math.random() * pdf.numPages) + 1;
         const page = await pdf.getPage(randomIndex);
