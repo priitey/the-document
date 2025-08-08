@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     const termExtractor = new TermExtractor(wordpos, 100);
     let extractedTerms = null;
-    let currentPdf = null; // NEW: To store the loaded PDF document
+    let currentPdf = null;
 
     const fileInput = document.getElementById('fileInput');
     const reset = document.getElementById('reset');
@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const ctx = canvas.getContext('2d');
     const homeBtn = document.getElementById('homeBtn');
     const uploadBtn = document.getElementById('uploadBtn');
+    const moreBtn = document.getElementById('more');
+    const moreClose = document.getElementById('more-close');
+    const moreEle = document.getElementById('more-window');
 
     homeBtn.addEventListener('click', () => {
         window.location.href = '../index.html';
@@ -31,6 +34,60 @@ document.addEventListener('DOMContentLoaded', function () {
             processRandomPage(currentPdf);
         }
     });
+
+    function toggleMoreWindow() {
+        const isVisible = moreEle.style.display === 'block';
+        moreEle.style.display = isVisible ? 'none' : 'block';
+    }
+    moreBtn.addEventListener('click', toggleMoreWindow);
+    moreClose.addEventListener('click', toggleMoreWindow);
+
+    makeInteractive(moreEle);
+    function makeInteractive(element) {
+        const titleBar = element.querySelector('.title-bar');
+        const resizer = element.querySelector('.resizer');
+        let isDragging = false;
+        let isResizing = false;
+        let offsetX, offsetY, startWidth, startHeight, startX, startY;
+
+        // --- Dragging Logic ---
+        titleBar.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - element.offsetLeft;
+            offsetY = e.clientY - element.offsetTop;
+            element.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        // --- Resizing Logic ---
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startWidth = element.offsetWidth;
+            startHeight = element.offsetHeight;
+            startX = e.clientX;
+            startY = e.clientY;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                element.style.left = `${e.clientX - offsetX}px`;
+                element.style.top = `${e.clientY - offsetY}px`;
+            }
+            if (isResizing) {
+                const newWidth = startWidth + (e.clientX - startX);
+                const newHeight = startHeight + (e.clientY - startY);
+                element.style.width = `${newWidth}px`;
+                element.style.height = `${newHeight}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            isResizing = false;
+            element.style.cursor = 'default';
+        });
+    }
 
     async function handleFileSelect(event) {
         const file = event.target.files[0];
