@@ -22,6 +22,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const fcCanvas = document.getElementById('fc-canvas');
     const bcCanvas = document.getElementById('bc-canvas');
 
+    const homeBtn = document.getElementById('homeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    homeBtn.addEventListener('click', () => {
+        window.location.href = '../index.html';
+    });
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click(); // Programmatically click the hidden file input
+    });
+
     // --- EVENT LISTENERS ---
     fileInput.addEventListener('change', handleFileSelect);
     newPageBtn.addEventListener('click', () => {
