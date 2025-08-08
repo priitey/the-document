@@ -16,28 +16,37 @@
 </head>
 
 <body>
-        <main>
-            <div class="window" id="controls-window">
-                <div class="title-bar">
-                    <div class="title-bar-text">Controls</div>
-                </div>
-                <div class="window-body">
-                    <button id="homeBtn">Home</button>
-                    <button id="uploadBtn">Upload Document</button>
-                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" hidden/>
-                    <button id="reset">Shuffle Layout</button>
-                    <button id="download">Download Layout</button>
-                </div>
+    <main>
+        <div class="window" id="controls-window">
+            <div class="title-bar">
+                <div class="title-bar-text">Controls</div>
             </div>
-            <div id="preview">
-                <div id="sticker">
-                    <!--<span class="term">Test</span>-->
-                    <!--JS inserts span w term class at random grid cells here-->
+            <div class="window-body">
+                <button id="homeBtn">Home</button>
+                <button id="uploadBtn">Upload Document</button>
+                <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" hidden />
+                <div class="sunken-panel" id="info-panel">
+                    Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
+                    What emerges from these documents?
+                    <br><br>
+                    Shuffle through the pages of the pdf to generate new layouts.
+                    Download the layout for your stickers to be printed.
+                    <br><br>
+                    These layouts are built for 29 x 90 mm label stickers.
+                    You can use a thermal printer like the Brother QL-500 to print them.
                 </div>
+                <button id="reset">Shuffle Layout</button>
+                <button id="download">Download Layout</button>
             </div>
-        </main>
+        </div>
+        <div id="preview">
+            <div id="sticker">
+                <!--JS inserts span w term class at random grid cells here-->
+            </div>
+        </div>
+    </main>
 
-        <script type="module" src="doc2.js"></script>
+    <script type="module" src="doc2.js"></script>
 </body>
 
 </html>

@@ -29,6 +29,9 @@ main {
 button {
         cursor: pointer !important;
 }
+#info-panel {
+    padding: 0.5rem;
+}
 #preview {
     flex: 2;
     background-color: rgb(211, 211, 211);
