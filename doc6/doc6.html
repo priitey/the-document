@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document.animate()</title>
+    <link href="doc6.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <link rel="icon" href="../favicon.png" type="image/x-icon">
+</head>
+
+<body>
+    <main class="app-container">
+        <!-- Left Panel: Controls -->
+        <div class="window" id="controls-window">
+            <div class="title-bar">
+                <div class="title-bar-text">Animation Controls</div>
+            </div>
+            <div class="window-body">
+                <button id="homeBtn">Home</button>
+                <div class="sunken-panel" id="info-panel">
+                    Upload a pdf, a rental agreement, a payslip, a bill, a receipt.
+                    What emerges from these documents?
+                    <br><br>
+                    Click 'Next Stage' to animate The Document.
+                    Click 'Shuffle' to choose a new page.
+                </div>
+                <button id="uploadBtn">Upload Document</button>
+                <input type="file" id="fileInput" accept=".pdf" hidden>
+                <button id="shuffleBtn" disabled>Shuffle</button>
+                <button id="nextStageBtn" disabled>Next Stage</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: The two pages -->
+        <div id="preview">
+            <div id="book-container">
+                <div class="page-container">
+                    <div id="og-page">
+                        <canvas id="pdf-canvas"></canvas>
+                    </div>
+                </div>
+                <div class="page-container">
+                    <div id="rmx-page">
+                        <!-- Animated layout blocks will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/wordpos-web@1.0.2/dist/wordpos.min.js"></script>
+    <script type="module" src="doc6.js"></script>
+</body>
+
+</html>

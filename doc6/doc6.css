@@ -1,0 +1,155 @@
+/* filepath: /Users/priteyy/Desktop/Freelance Work/Projects 2025/the document/doc6/doc6.css */
+:root {
+    --bg: #c0c0c0;
+    --fg: #000000;
+    --acc: #808080;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--acc);
+    color: var(--fg);
+    font-size: 1em;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+canvas {
+    filter: grayscale(100%);
+}
+
+button {
+    cursor: pointer;
+}
+
+#controls-window {
+    margin: 1rem;
+    width: 300px;
+    height: fit-content;
+    flex-shrink: 0;
+}
+
+#controls-window .window-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+#info-panel {
+    padding: 0.5rem;
+}
+
+#preview {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Times New Roman';
+}
+
+#book-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.page-container {
+    width: 40vw;
+    max-width: 500px;
+    aspect-ratio: 148 / 210; /* A-series paper ratio */
+    background: var(--bg);
+    box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+    padding: 2px;
+}
+
+#og-page, #rmx-page {
+    width: 100%;
+    height: 100%;
+    position: relative; /* CRUCIAL for positioning layout blocks */
+    overflow: hidden;
+}
+
+#og-page canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.layout-block {
+    position: absolute;
+    color: var(--fg);
+    border: 1px none red;
+    padding: 1px;
+    white-space: nowrap; /* Prevent wrapping */
+    font-size: 8px; /* Start with a small base font size */
+    will-change: transform, top, left; /* Performance hint for the browser */
+}
+
+/* --- PRINT STYLES (REVISED) --- */
+@media print {
+    @page {
+        size: A6 portrait;
+        margin: 0mm;
+    }
+
+    /* Hide everything by default */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Make the book container and its children visible */
+    #book-container, #book-container * {
+        visibility: visible;
+    }
+
+    /* Position the book container to fill the printed page */
+    #book-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100% !important;
+        margin: 0;
+        padding: 0;
+        gap: 0;
+    }
+
+    /* Ensure each page container takes up the full page */
+    #book-container > div {
+        width: 100% !important;
+        height: 100% !important;
+        page-break-after: always; /* Each page gets its own sheet */
+    }
+
+    /* Prevent an extra blank page at the end */
+    #book-container > div:last-child {
+        page-break-after: auto;
+    }
+
+    #og-page, .rmx-page, #first-page, #last-page {
+        box-shadow: none !important;
+        display: flex !important;
+        justify-content: center !important; /* Center horizontally */
+        align-items: center !important;     /* Center vertically */
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .generated-page-image {
+        height: 100% !important;  /* Touch the top and bottom edges */
+        width: auto !important;   /* Let the width adjust automatically */
+        object-fit: contain !important; /* Still useful as a fallback */
+    }
+}
