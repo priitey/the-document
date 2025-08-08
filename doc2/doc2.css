@@ -16,6 +16,7 @@ main {
 
 #controls-window {
     margin: 1rem;
+    width: 300px;
     height: fit-content;
 }
 

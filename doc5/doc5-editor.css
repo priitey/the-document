@@ -36,9 +36,9 @@ button {
 
 #controls-window {
     margin: 1rem;
-    width: 250px;
+    width: 300px;
     height: fit-content;
-    flex-shrink: 0; /* Prevent the window from shrinking */
+    flex-shrink: 0;
 }
 
 #controls-window .window-body {

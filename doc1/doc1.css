@@ -23,7 +23,7 @@ body {
     z-index: 5;
     top: 20px;
     left: 20px;
-    width: 200px; /* Adjust width as needed */
+    width: 300px; /* Adjust width as needed */
 }
 
 #controls-window .window-body {

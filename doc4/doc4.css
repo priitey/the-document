@@ -32,7 +32,7 @@ button {
 
 #controls-window {
     margin: 1rem;
-    width: 250px;
+    width: 300;
     height: fit-content;
     flex-shrink: 0; /* Prevent the window from shrinking */
 }
