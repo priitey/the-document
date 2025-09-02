@@ -17,13 +17,12 @@ body {
     overflow: hidden;
 }
 
-/* MODIFIED: Replaced .upload-container with styles for the new window */
 #controls-window {
     position: absolute;
     z-index: 5;
     top: 20px;
     left: 20px;
-    width: 300px; /* Adjust width as needed */
+    width: 300px;
 }
 
 #controls-window .window-body {
@@ -36,7 +35,6 @@ button#uploadBtn {
     cursor: pointer;
 }
 #fileInput {
-    /* The input is already hidden in the HTML, this is just for safety */
     display: none;
 }
 
@@ -57,10 +55,12 @@ button#uploadBtn {
     transition: animation-play-state 3.3s ease;
     mix-blend-mode: difference;
     pointer-events: none;
+    font-family: 'Times New Roman';
 }
 
 #terms 
 {
+    font-family: 'Times New Roman';
     position: absolute;
     z-index: 3;
     top: 0;
